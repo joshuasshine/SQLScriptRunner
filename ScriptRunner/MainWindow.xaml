@@ -1,0 +1,81 @@
+﻿<Window x:Class="ScriptRunner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:VT="clr-namespace:ScriptRunner.Node.Windows.Controls"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:ScriptRunner"        
+        xmlns:Node="clr-namespace:ScriptRunner.Node"
+        FontSize="13"        
+  Title="SQL Script Runner"
+  Width="890" Height="660" WindowStyle="SingleBorderWindow" 
+  WindowStartupLocation="CenterScreen"  ResizeMode="CanMinimize" >
+    
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/PresentationFramework.Royale;V3.0.0.0;31bf3856ad364e35;component\themes\royale.normalcolor.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <Style x:Key="TreeViewItemStyle" TargetType="TreeViewItem">
+                <Setter Property="IsExpanded" Value="True" />
+                <Setter Property="IsSelected" Value="{Binding IsInitiallySelected, Mode=TwoWay}" />
+                <Setter Property="KeyboardNavigation.AcceptsReturn" Value="True" />
+                <Setter Property="VT:VirtualToggleButton.IsVirtualToggleButton" Value="True" />
+                <Setter Property="VT:VirtualToggleButton.IsChecked" Value="{Binding IsChecked}" />
+            </Style>
+
+            <HierarchicalDataTemplate x:Key="CheckBoxItemTemplate" ItemsSource="{Binding Children, Mode=TwoWay}">
+                <StackPanel Orientation="Horizontal">
+                     <!--These elements are bound to a ScriptNode object.--> 
+                    <CheckBox Focusable="False" IsChecked="{Binding IsChecked}" VerticalAlignment="Center" Name="_ck" />
+                    <ContentPresenter Content="{Binding Name, Mode=OneTime}" Margin="2,0" />
+                </StackPanel> 
+            </HierarchicalDataTemplate>
+        </ResourceDictionary>        
+    </Window.Resources>
+
+    <Window.DataContext>
+        <ObjectDataProvider x:Name="FolderLocation" x:Uid ="test"  MethodName="CreateNode" ObjectType="{x:Type Node:ScriptNode}" >          
+        </ObjectDataProvider>
+    </Window.DataContext>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="550" />
+            <RowDefinition Height="50" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="446" />
+            <ColumnDefinition Width="444" />
+        </Grid.ColumnDefinitions>
+
+        <Menu IsMainMenu="True" Height="28" Name="Menu">
+            <MenuItem Name="load" Header="_Load" Click="Source_Path"/>
+            <MenuItem Name="saveFile" Header="_Save" Click="Save_File" />
+            <MenuItem Name="saveAsFile" Header="_SaveAs" Click="SaveAs_File" />
+            <MenuItem Name="unCheckAll" Header="_UnCheck All" Click="UnCheckAll" />
+            <MenuItem Name="runScript" Header="_Run Scripts" Click="Run_Scripts" />
+            <MenuItem Name="updateScript" Header="_Update Existing DB" Click="Update_Scripts" />
+        </Menu>
+
+
+        <DockPanel Name="DK" Margin="0,0,0,0" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="500">
+            <TreeView x:Name="tree" ItemContainerStyle="{DynamicResource TreeViewItemStyle}" ItemsSource="{Binding Mode=OneWay}"   ItemTemplate="{StaticResource CheckBoxItemTemplate}"
+       SelectedItemChanged="tree_SelectedItemChanged" Width="443" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,0,2,0" Height="500" BorderThickness="2" >
+            </TreeView>                
+        </DockPanel>
+        
+        <DockPanel Margin="0,0,0,0" Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2" Height="500">
+            <RichTextBox x:Name="SQLScript"  Height="500" VerticalAlignment="Top" HorizontalAlignment="right" Width="420" Margin="0,0,15,0"  ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" BorderThickness="2">               
+                <FlowDocument>
+                    <Paragraph x:Name="ScriptPara"></Paragraph>
+                </FlowDocument>
+            </RichTextBox>
+        </DockPanel>
+        <!--<DockPanel Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" Grid.RowSpan="2" HorizontalAlignment="Left">
+            <Button Command="Undo" Content="Uncheck All" Margin="20,2" Padding="8,0" Height="30"  />
+        </DockPanel>-->
+
+    </Grid>
+</Window>
